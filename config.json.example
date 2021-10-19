@@ -1,0 +1,10 @@
+{
+  "service_port": 8080,
+  "secret_key": "12345678",
+  "use_log": true,
+
+  "database_host": "",
+  "database_username": "",
+  "database_password": "",
+  "database_name": ""
+}
