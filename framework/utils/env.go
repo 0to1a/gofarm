@@ -2,14 +2,17 @@ package utils
 
 import (
 	"encoding/json"
+	"framework/app/model"
 	"framework/app/structure"
+	"framework/framework/database"
+	"github.com/doug-martin/goqu/v9"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
 var (
-	JwtToken string
+	JwtSecret string
 )
 
 func ReloadSystem() {
@@ -25,5 +28,13 @@ func ReloadSystem() {
 		log.Fatalln(errorEnv, err)
 	}
 
-	JwtToken = structure.SystemConf.SecretKey
+	JwtSecret = structure.SystemConf.SecretKey
+
+	if structure.SystemConf.Database == "" {
+		model.Database = nil
+	} else if structure.SystemConf.Database == "mysql" {
+		conf := structure.SystemConf
+		model.Database = database.MysqlConnect(conf.DatabaseUsername, conf.DatabasePassword, conf.DatabaseHost, conf.DatabaseName)
+		model.Dialect = goqu.Dialect("mysql")
+	}
 }

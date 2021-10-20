@@ -23,10 +23,11 @@ func ConfigRoute() *echo.Echo {
 	}
 	route.Use(middleware.Recover())
 
-	route.GET("/", controller.AppTest)
+	route.GET("/", controller.AppTestExample)
+	route.GET("/login", controller.AppLoginExample)
 	v2 := route.Group("/v1", AuthUserAPI)
 	{
-		v2.POST("/", controller.AppTest)
+		v2.POST("/", controller.AppTestExample)
 	}
 
 	return route

@@ -3,8 +3,10 @@
   "secret_key": "12345678",
   "use_log": true,
 
-  "database_host": "",
-  "database_username": "",
-  "database_password": "",
-  "database_name": ""
+  "database": "mysql",
+  "database_host": "localhost:3306",
+  "database_username": "root",
+  "database_password": "root",
+  "database_name": "example_db",
+  "use_migration": true
 }

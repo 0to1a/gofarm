@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"github.com/doug-martin/goqu/v9"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"runtime"
@@ -13,7 +14,7 @@ var (
 )
 
 func MysqlTableCheck(database *sqlx.DB, table string) bool {
-	_, tableCheck := database.Query("select * from " + table + ";")
+	_, tableCheck := database.Query("select * from " + table)
 
 	if tableCheck == nil {
 		return true
@@ -61,6 +62,7 @@ func MysqlSeedCheck(database *sqlx.DB) int64 {
 
 	err := row.Scan(&trxId)
 	if err == sql.ErrNoRows {
+		log.Println(okMigration1, details.Name())
 		return ErrSeedNoRows
 	}
 
@@ -100,7 +102,7 @@ func MysqlInsertMigration(database *sqlx.DB) int64 {
 }
 
 func MysqlConnect(databaseUsername string, databasePassword string, databaseHost string, databaseName string) *sqlx.DB {
-	database, err := sqlx.Connect("mysql", databaseUsername+":"+databasePassword+"@tcp("+databaseHost+")/"+databaseName+"?multiStatements=true&parseTime=true")
+	database, err := sqlx.Connect("mysql", databaseUsername+":"+databasePassword+"@tcp("+databaseHost+")/"+databaseName+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
 	if err != nil {
 		log.Fatalln(err)
 	}

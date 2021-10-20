@@ -5,6 +5,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func AppTest(context echo.Context) error {
+func AppTestExample(context echo.Context) error {
+	return webserver.ResultAPI(context, 200, "OK", "")
+}
+
+func AppLoginExample(context echo.Context) error {
 	return webserver.ResultAPI(context, 200, "OK", "")
 }

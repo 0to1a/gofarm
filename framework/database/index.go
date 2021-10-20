@@ -12,6 +12,7 @@ const (
 )
 
 const (
+	okMigration1    = "No Migration Unit: "
 	errorMigration1 = "Err Migration #S0001: no indexing function"
 	errorMigration2 = "Err Migration #S0002: database not init"
 	errorMigration3 = "Err Migration #S0003: database can't create table"
