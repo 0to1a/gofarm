@@ -19,6 +19,7 @@ func CreateService(port int, router *echo.Echo) {
 		serverPort := ":" + strconv.Itoa(port)
 
 		log.Print("Webserver: Service Running")
+		router.HideBanner = true
 		router.Logger.Fatal(router.Start(serverPort))
 	}()
 
