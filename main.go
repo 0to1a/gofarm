@@ -20,6 +20,9 @@ func main() {
 	if structure.SystemConf.UseMigration && structure.SystemConf.Database != "" {
 		migration.SeedDatabase()
 	}
+	if structure.SystemConf.ServiceMonitor {
+		utils.UseMonitor()
+	}
 
 	webserver.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
 
