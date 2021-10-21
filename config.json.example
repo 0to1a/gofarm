@@ -3,6 +3,7 @@
   "secret_key": "12345678",
   "use_log": true,
   "use_monitor": true,
+  "use_cronjob": true,
 
   "database": "mysql",
   "database_host": "localhost:3306",

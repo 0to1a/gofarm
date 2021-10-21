@@ -23,6 +23,9 @@ func main() {
 	if structure.SystemConf.ServiceMonitor {
 		utils.UseMonitor()
 	}
+	if structure.SystemConf.ServiceCronJob {
+		app.CronJobMaker()
+	}
 
 	webserver.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
 

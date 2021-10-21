@@ -9,6 +9,7 @@ type configure struct {
 	SecretKey      string `json:"secret_key"`
 	ServiceLog     bool   `json:"use_log"`
 	ServiceMonitor bool   `json:"use_monitor"`
+	ServiceCronJob bool   `json:"use_cronjob"`
 
 	Database         string `json:"database"`
 	DatabaseHost     string `json:"database_host"`
