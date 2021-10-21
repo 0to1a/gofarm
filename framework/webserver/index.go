@@ -18,7 +18,7 @@ func CreateService(port int, router *echo.Echo) {
 	go func() {
 		serverPort := ":" + strconv.Itoa(port)
 
-		log.Print("Server: Service Running")
+		log.Print("Webserver: Service Running")
 		router.Logger.Fatal(router.Start(serverPort))
 	}()
 

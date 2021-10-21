@@ -2,6 +2,7 @@ package app
 
 import (
 	"framework/app/controller"
+	"framework/app/model"
 	"framework/app/structure"
 	"framework/framework/webserver"
 	"github.com/dgrijalva/jwt-go"
@@ -24,10 +25,11 @@ func ConfigRoute() *echo.Echo {
 	route.Use(middleware.Recover())
 
 	route.GET("/", controller.AppTestExample)
-	route.GET("/login", controller.AppLoginExample)
+	route.POST("/login", controller.AppLoginExample)
 	v2 := route.Group("/v1", AuthUserAPI)
 	{
-		v2.POST("/", controller.AppTestExample)
+		v2.GET("/", controller.AppTestExample)
+		v2.GET("/hello", controller.AppTestHello)
 	}
 
 	return route
@@ -55,8 +57,12 @@ func AuthUserAPI(next echo.HandlerFunc) echo.HandlerFunc {
 				return webserver.ResultAPI(c, http.StatusUnauthorized, "Unauthorized", "")
 			}
 
-			// TODO: Check "username" exist
+			userId := model.ExampleGetUsername(username)
+			if userId == nil {
+				return webserver.ResultAPI(c, http.StatusUnauthorized, "Unauthorized", "")
+			}
 
+			c.Set("userid", userId)
 			c.Set("username", username)
 		}
 		return next(c)
