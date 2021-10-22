@@ -41,13 +41,28 @@ func SetLogFile(logPath string, filenameLog string, filenameError string) {
 	}
 }
 
-func ResultAPI(c echo.Context, response int, message string, data interface{}) error {
-	result := map[string]interface{}{
-		"response": response,
-		"message":  message,
-		"data":     data,
+func ResponseAPI(response int, message string, data interface{}) map[string]interface{} {
+	return map[string]interface{}{
+		"response":  response,
+		"message":   message,
+		"data":      data,
+		"timestamp": time.Now().Unix(),
 	}
-	return c.JSON(response, result)
+}
+
+func ResultAPI(c echo.Context, response int, message string, data interface{}) error {
+	return c.JSON(response, ResponseAPI(response, message, data))
+}
+
+func ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
+	response := 0
+	switch v := mapJson["response"].(type) {
+	case int:
+		response = v
+	case float64:
+		response = int(v)
+	}
+	return c.JSON(response, mapJson)
 }
 
 func Logger() echo.MiddlewareFunc {

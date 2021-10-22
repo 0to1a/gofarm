@@ -4,6 +4,7 @@ import (
 	"framework/app"
 	"framework/app/migration"
 	"framework/app/structure"
+	"framework/framework/database"
 	"framework/framework/utils"
 	"framework/framework/webserver"
 	"log"
@@ -25,6 +26,9 @@ func main() {
 	}
 	if structure.SystemConf.ServiceCronJob {
 		app.CronJobMaker()
+	}
+	if structure.SystemConf.ServiceRedis {
+		database.RedisConnect()
 	}
 
 	webserver.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())

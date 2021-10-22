@@ -31,6 +31,7 @@ func ConfigRoute() *echo.Echo {
 		v2.GET("/", controller.AppTestExample)
 		v2.GET("/hello", controller.AppTestHello)
 	}
+	route.GET("/redis", controller.RedisExampleTime)
 
 	return route
 }

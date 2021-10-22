@@ -10,5 +10,10 @@
   "database_username": "root",
   "database_password": "root",
   "database_name": "example_db",
-  "use_migration": true
+  "use_migration": true,
+
+  "use_redis": true,
+  "redis_host": "localhost:6379",
+  "redis_password": "",
+  "redis_database": 0
 }

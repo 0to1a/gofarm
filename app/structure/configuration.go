@@ -17,4 +17,9 @@ type configure struct {
 	DatabasePassword string `json:"database_password"`
 	DatabaseName     string `json:"database_name"`
 	UseMigration     bool   `json:"use_migration"`
+
+	ServiceRedis  bool   `json:"use_redis"`
+	RedisHost     string `json:"redis_host"`
+	RedisPassword string `json:"redis_password"`
+	RedisDatabase int    `json:"redis_database"`
 }
