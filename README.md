@@ -22,13 +22,14 @@ go get ./...
 Golang version 1.16+ and Go-Mod supported.
 
 ## Feature on Next Development
-- [ ] Redis connection
+- [x] Redis connection
 - [ ] GoFarm Assistant, like PHP Artisan-Laravel
 - [x] Built-in cron job
 - [ ] Protobuf communication
 - [ ] Other database connection
 - [ ] Unit test
 - [ ] Usage Documentation
+- [ ] Serverless Architecture
 
 ## Changelog and New Feature
 You can find on GitHub's Release
@@ -46,3 +47,4 @@ You can find on GitHub's Release
 - github.com/jmoiron/sqlx
 - github.com/dgrijalva/jwt-go
 - github.com/go-co-op/gocron
+- github.com/go-redis/redis
