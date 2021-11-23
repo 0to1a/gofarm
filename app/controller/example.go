@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"framework/app/model"
+	"framework/framework/utils"
 	"framework/framework/webserver"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -25,12 +26,14 @@ func AppLoginExample(ctx echo.Context) error {
 
 	id, username := model.ExampleGetApikey(inJSON.Apikey)
 	if id == nil {
+		utils.LogError("Not Authorized")
 		_ = webserver.ResultAPI(ctx, http.StatusUnauthorized, "Not Authorized", "api_key")
 		return fmt.Errorf("401:na")
 	}
 
 	token, err := webserver.JWTCreateToken(username, 15)
 	if err != nil {
+		utils.LogError("Server Error: " + err.Error())
 		_ = webserver.ResultAPI(ctx, http.StatusInternalServerError, "Server Error", "")
 		return fmt.Errorf("500:se")
 	}
