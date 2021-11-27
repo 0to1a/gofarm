@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"framework/app/model"
 	"framework/app/structure"
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
@@ -14,27 +13,27 @@ import (
 )
 
 func RedisConnect() {
-	model.RedisDB = redis.NewClient(&redis.Options{
+	RedisDB = redis.NewClient(&redis.Options{
 		Addr:     structure.SystemConf.RedisHost,
 		Password: structure.SystemConf.RedisPassword,
 		DB:       structure.SystemConf.RedisDatabase,
 	})
 
-	_, err := model.RedisDB.Ping(context.Background()).Result()
+	_, err := RedisDB.Ping(context.Background()).Result()
 	if err != nil {
-		model.RedisDB = nil
+		RedisDB = nil
 		return
 	}
 }
 
 func RedisCacheSet(urlPath string, payload string, timeInMinutes int, data string) bool {
-	if model.RedisDB == nil {
+	if RedisDB == nil {
 		return false
 	}
 
 	hash := SeedName(urlPath) + "|" + SeedName(payload)
 
-	err := model.RedisDB.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
+	err := RedisDB.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
 	if err != nil {
 		log.Println("redis", err)
 		return false
@@ -44,12 +43,12 @@ func RedisCacheSet(urlPath string, payload string, timeInMinutes int, data strin
 }
 
 func RedisCacheGet(urlPath string, payload string) (bool, string) {
-	if model.RedisDB == nil {
+	if RedisDB == nil {
 		return false, ""
 	}
 
 	hash := SeedName(urlPath) + "|" + SeedName(payload)
-	res, err := model.RedisDB.Get(context.Background(), hash).Result()
+	res, err := RedisDB.Get(context.Background(), hash).Result()
 	if err == redis.Nil {
 		return false, ""
 	} else if err != nil {
