@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"framework/app/structure"
-	"framework/framework/utils"
 	"github.com/go-redis/redis/v8"
 	"github.com/labstack/echo/v4"
 	"io/ioutil"
@@ -37,7 +36,6 @@ func RedisCacheSet(urlPath string, payload string, timeInMinutes int, data strin
 	err := RedisDB.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
 	if err != nil {
 		log.Println("redis", err)
-		utils.LogError("redis:" + err.Error())
 		return false
 	}
 
@@ -55,7 +53,6 @@ func RedisCacheGet(urlPath string, payload string) (bool, string) {
 		return false, ""
 	} else if err != nil {
 		log.Println("redis", err)
-		utils.LogError("redis:" + err.Error())
 		return false, ""
 	}
 
@@ -102,7 +99,6 @@ func RedisCacheRemove(urlPath string, payload string) bool {
 			err := RedisDB.Del(context.Background(), iter.Val()).Err()
 			if err != nil {
 				log.Println("redis", err)
-				utils.LogError("redis:" + err.Error())
 				return false
 			}
 		}
@@ -111,7 +107,6 @@ func RedisCacheRemove(urlPath string, payload string) bool {
 		err := RedisDB.Del(context.Background(), hash).Err()
 		if err != nil {
 			log.Println("redis", err)
-			utils.LogError("redis:" + err.Error())
 			return false
 		}
 	}
