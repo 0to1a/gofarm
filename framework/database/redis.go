@@ -64,7 +64,7 @@ func RedisCacheSetCompress(urlPath string, payload string, timeInMinutes int, da
 
 	str := base64.StdEncoding.EncodeToString(b.Bytes())
 
-	return RedisCacheSetCompress(urlPath, payload, timeInMinutes, str)
+	return RedisCacheSet(urlPath, payload, timeInMinutes, str)
 }
 
 func RedisCacheGet(urlPath string, payload string) (bool, string) {
