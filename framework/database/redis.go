@@ -2,7 +2,9 @@ package database
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"framework/app/structure"
 	"github.com/go-redis/redis/v8"
@@ -21,6 +23,7 @@ func RedisConnect() {
 
 	_, err := RedisDB.Ping(context.Background()).Result()
 	if err != nil {
+		log.Println("redis:", err)
 		RedisDB = nil
 		return
 	}
@@ -42,6 +45,28 @@ func RedisCacheSet(urlPath string, payload string, timeInMinutes int, data strin
 	return true
 }
 
+func RedisCacheSetCompress(urlPath string, payload string, timeInMinutes int, data string) bool {
+	if RedisDB == nil {
+		return false
+	}
+
+	var b bytes.Buffer
+	gz := gzip.NewWriter(&b)
+	if _, err := gz.Write([]byte(data)); err != nil {
+		log.Println("gzip", err)
+	}
+	if err := gz.Flush(); err != nil {
+		log.Println("gzip", err)
+	}
+	if err := gz.Close(); err != nil {
+		log.Println("gzip", err)
+	}
+
+	str := base64.StdEncoding.EncodeToString(b.Bytes())
+
+	return RedisCacheSetCompress(urlPath, payload, timeInMinutes, str)
+}
+
 func RedisCacheGet(urlPath string, payload string) (bool, string) {
 	if RedisDB == nil {
 		return false, ""
@@ -57,6 +82,20 @@ func RedisCacheGet(urlPath string, payload string) (bool, string) {
 	}
 
 	return true, res
+}
+
+func RedisCacheGetCompress(urlPath string, payload string) (bool, string) {
+	isOkay, res := RedisCacheGet(urlPath, payload)
+	if !isOkay {
+		return isOkay, res
+	}
+
+	data, _ := base64.StdEncoding.DecodeString(res)
+	rdata := bytes.NewReader(data)
+	r, _ := gzip.NewReader(rdata)
+	decompress, _ := ioutil.ReadAll(r)
+
+	return isOkay, string(decompress)
 }
 
 func RedisCacheJson(c echo.Context, timeInMinutes int, data map[string]interface{}) bool {
