@@ -1,20 +1,17 @@
-package utils
+package framework
 
 import (
 	"encoding/json"
 	"framework/app/structure"
-	"framework/framework/database"
 	"github.com/doug-martin/goqu/v9"
 	"io/ioutil"
 	"log"
 	"os"
 )
 
-var (
-	JwtSecret string
-)
+func (w *Utils) ReloadSystem() {
+	// TODO: read ENV machine first
 
-func ReloadSystem() {
 	jsonFile, err := os.Open("config.json")
 	if err != nil {
 		log.Fatalln(errorEnv1)
@@ -27,13 +24,13 @@ func ReloadSystem() {
 		log.Fatalln(errorEnv, err)
 	}
 
-	JwtSecret = structure.SystemConf.SecretKey
+	jwtSecret = structure.SystemConf.SecretKey
 
 	if structure.SystemConf.Database == "" {
-		database.Database = nil
+		Database = nil
 	} else if structure.SystemConf.Database == "mysql" {
 		conf := structure.SystemConf
-		database.Database = database.MysqlConnect(conf.DatabaseUsername, conf.DatabasePassword, conf.DatabaseHost, conf.DatabaseName)
-		database.Dialect = goqu.Dialect("mysql")
+		Database = MysqlConnect(conf.DatabaseUsername, conf.DatabasePassword, conf.DatabaseHost, conf.DatabaseName)
+		Dialect = goqu.Dialect("mysql")
 	}
 }

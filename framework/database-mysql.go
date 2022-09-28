@@ -1,4 +1,4 @@
-package database
+package framework
 
 import (
 	"database/sql"
@@ -9,8 +9,12 @@ import (
 	"runtime"
 )
 
+// TODO: re-make with SQLBoiler
+
 var (
 	dialectMysql goqu.DialectWrapper
+	Database     *sqlx.DB
+	Dialect      goqu.DialectWrapper
 )
 
 func MysqlTableCheck(database *sqlx.DB, table string) bool {
@@ -28,7 +32,7 @@ func MysqlSeedCheck(database *sqlx.DB) int64 {
 	details := runtime.FuncForPC(pc)
 	seedName := ""
 	if ok && details != nil {
-		seedName = SeedName(details.Name())
+		seedName = utils.SeedName(details.Name())
 	} else {
 		log.Fatalln(errorMigration1)
 	}
@@ -74,7 +78,7 @@ func MysqlInsertMigration(database *sqlx.DB) int64 {
 	details := runtime.FuncForPC(pc)
 	seedName := ""
 	if ok && details != nil {
-		seedName = SeedName(details.Name())
+		seedName = utils.SeedName(details.Name())
 	} else {
 		log.Fatalln(errorMigration1)
 	}
