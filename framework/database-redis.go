@@ -24,33 +24,58 @@ type RedisDatabase struct {
 	Host     string
 	Password string
 	Database int
+	client   *redis.Client
 }
 
 func (w RedisDatabase) Connect() *redis.Client {
-	RedisDB = redis.NewClient(&redis.Options{
+	var clientRedis *redis.Client
+	clientRedis = redis.NewClient(&redis.Options{
 		Addr:     w.Host,
 		Password: w.Password,
 		DB:       w.Database,
 	})
 	RedisPrefix = w.Prefix
 
-	_, err := RedisDB.Ping(context.Background()).Result()
+	_, err := clientRedis.Ping(context.Background()).Result()
 	if err != nil {
 		log.Println("redis:", err)
 		RedisDB = nil
 		return nil
 	}
-	return RedisDB
+	w.client = clientRedis
+	RedisDB = clientRedis
+	return clientRedis
+}
+
+func (w RedisDatabase) CheckClient() *redis.Client {
+	if RedisDB == nil && w.client == nil {
+		return nil
+	} else if w.client != nil {
+		return w.client
+	} else {
+		return RedisDB
+	}
+}
+
+func (w RedisDatabase) CheckPrefix() string {
+	if RedisPrefix == "" && w.Prefix == "" {
+		return ""
+	} else if w.Prefix != "" {
+		return w.Prefix
+	} else {
+		return RedisPrefix
+	}
 }
 
 func (w RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, data string) bool {
-	if RedisDB == nil {
+	var clientRedis *redis.Client
+	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
 	}
 
-	hash := RedisPrefix + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
 
-	err := RedisDB.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
+	err := clientRedis.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
 	if err != nil {
 		log.Println("redis", err)
 		return false
@@ -60,7 +85,8 @@ func (w RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, da
 }
 
 func (w RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes int, data string) bool {
-	if RedisDB == nil {
+	var clientRedis *redis.Client
+	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
 	}
 
@@ -85,12 +111,13 @@ func (w RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes
 }
 
 func (w RedisDatabase) Get(urlPath string, payload string) (bool, string) {
-	if RedisDB == nil {
+	var clientRedis *redis.Client
+	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false, ""
 	}
 
-	hash := RedisPrefix + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
-	res, err := RedisDB.Get(context.Background(), hash).Result()
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
+	res, err := clientRedis.Get(context.Background(), hash).Result()
 	if err == redis.Nil {
 		return false, ""
 	} else if err != nil {
@@ -150,16 +177,17 @@ func (w RedisDatabase) GetJson(c echo.Context) error {
 }
 
 func (w RedisDatabase) Remove(urlPath string, payload string) bool {
-	if RedisDB == nil {
+	var clientRedis *redis.Client
+	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
 	}
 
-	hash := RedisPrefix + utils.SeedName(urlPath) + "|"
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|"
 	if payload == "" {
 		hash += "*"
-		iter := RedisDB.Scan(context.Background(), 0, hash, 0).Iterator()
+		iter := clientRedis.Scan(context.Background(), 0, hash, 0).Iterator()
 		for iter.Next(context.Background()) {
-			err := RedisDB.Del(context.Background(), iter.Val()).Err()
+			err := clientRedis.Del(context.Background(), iter.Val()).Err()
 			if err != nil {
 				log.Println("redis", err)
 				return false
@@ -167,7 +195,7 @@ func (w RedisDatabase) Remove(urlPath string, payload string) bool {
 		}
 	} else {
 		hash += utils.SeedName(payload)
-		err := RedisDB.Del(context.Background(), hash).Err()
+		err := clientRedis.Del(context.Background(), hash).Err()
 		if err != nil {
 			log.Println("redis", err)
 			return false
