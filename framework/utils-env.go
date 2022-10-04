@@ -3,7 +3,6 @@ package framework
 import (
 	"encoding/json"
 	"framework/app/structure"
-	"github.com/doug-martin/goqu/v9"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,10 +26,13 @@ func (w *Utils) ReloadSystem() {
 	jwtSecret = structure.SystemConf.SecretKey
 
 	if structure.SystemConf.Database == "" {
-		Database = nil
+		DatabaseMysql = nil
 	} else if structure.SystemConf.Database == "mysql" {
-		conf := structure.SystemConf
-		Database = MysqlConnect(conf.DatabaseUsername, conf.DatabasePassword, conf.DatabaseHost, conf.DatabaseName)
-		Dialect = goqu.Dialect("mysql")
+		mysql = MysqlDatabase{
+			Username: structure.SystemConf.DatabaseUsername,
+			Password: structure.SystemConf.DatabasePassword,
+			Host:     structure.SystemConf.DatabaseHost,
+			Database: structure.SystemConf.DatabaseName,
+		}
 	}
 }

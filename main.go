@@ -27,7 +27,7 @@ func main() {
 	WebService := framework.WebServer{}
 
 	// TODO: create migration module
-	//if structure.SystemConf.UseMigration && structure.SystemConf.Database != "" {
+	//if structure.SystemConf.UseMigration && structure.SystemConf.DatabaseMysql != "" {
 	//	migration.SeedDatabase()
 	//}
 	// TODO: log system
