@@ -6,13 +6,36 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"reflect"
+	"strconv"
+	"strings"
 )
 
 func (w *Utils) ReloadSystem() {
-	// TODO: read ENV machine first
+	v := reflect.ValueOf(&structure.SystemConf).Elem()
+	for j := 0; j < v.NumField(); j++ {
+		jsonName := v.Type().Field(j).Tag.Get("json")
+		typeName := v.Field(j).Type().Name()
+		input := os.Getenv(strings.ToUpper(jsonName))
+		if typeName == "int" {
+			tmp, _ := strconv.ParseInt(input, 10, 64)
+			v.Field(j).SetInt(tmp)
+		} else if typeName == "float" {
+			tmp, _ := strconv.ParseFloat(input, 64)
+			v.Field(j).SetFloat(tmp)
+		} else if typeName == "bool" {
+			if strings.ToUpper(input) == "TRUE" || input == "1" {
+				v.Field(j).SetBool(true)
+			} else {
+				v.Field(j).SetBool(false)
+			}
+		} else {
+			v.Field(j).SetString(input)
+		}
+	}
 
 	jsonFile, err := os.Open("config.json")
-	if err != nil {
+	if err != nil && structure.SystemConf.ServicePort == 0 {
 		log.Fatalln(errorEnv1)
 	}
 	defer jsonFile.Close()

@@ -4,6 +4,7 @@ type Utils struct{}
 
 var utils Utils
 var webserver WebServer
+var mysql MysqlDatabase
 
 const (
 	SeedOK        = 200
