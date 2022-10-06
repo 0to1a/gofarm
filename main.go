@@ -24,23 +24,17 @@ func main() {
 		Password: structure.SystemConf.RedisPassword,
 		Database: structure.SystemConf.RedisDatabase,
 	}
-	WebService := framework.WebServer{}
 
 	// TODO: create migration module
 	//if structure.SystemConf.UseMigration && structure.SystemConf.DatabaseMysql != "" {
 	//	migration.SeedDatabase()
 	//}
-	// TODO: log system
-	//if structure.SystemConf.ServiceMonitor {
-	//	utils.UseMonitor()
-	//}
 	if structure.SystemConf.ServiceRedis {
 		Redis.Connect()
 	}
 
-	if structure.SystemConf.ServicePort != 0 {
-		WebService.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
+	WebService := framework.WebServer{}
+	WebService.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
 
-		select {}
-	}
+	select {}
 }
