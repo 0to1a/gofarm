@@ -56,7 +56,9 @@ func (w *WebServer) ResultAPIFromJson(c echo.Context, mapJson map[string]interfa
 	return c.JSON(response, mapJson)
 }
 
-func (w *WebServer) Logger() echo.MiddlewareFunc {
+func (w *WebServer) Logger(logFolder string, filenameLog string, filenameError string) echo.MiddlewareFunc {
+	w.SetupLogFile(logFolder, filenameLog, filenameError)
+
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
 			req := c.Request()

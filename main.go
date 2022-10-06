@@ -10,7 +10,7 @@ import (
 var utils framework.Utils
 
 const (
-	goFarmVersion = "1.1.0-alpha"
+	goFarmVersion = "1.1.1-alpha"
 	nameService   = "ProjectName"
 )
 
@@ -24,23 +24,12 @@ func main() {
 		Password: structure.SystemConf.RedisPassword,
 		Database: structure.SystemConf.RedisDatabase,
 	}
-	WebService := framework.WebServer{}
 
-	// TODO: create migration module
-	//if structure.SystemConf.UseMigration && structure.SystemConf.DatabaseMysql != "" {
-	//	migration.SeedDatabase()
-	//}
-	// TODO: log system
-	//if structure.SystemConf.ServiceMonitor {
-	//	utils.UseMonitor()
-	//}
-	if structure.SystemConf.ServiceCronJob {
-		app.CronJobMaker()
-	}
 	if structure.SystemConf.ServiceRedis {
 		Redis.Connect()
 	}
 
+	WebService := framework.WebServer{}
 	WebService.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
 
 	select {}

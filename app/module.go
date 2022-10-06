@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"framework/app/calculateModule"
 	"framework/app/exampleModule"
+	"framework/app/structure"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -11,15 +12,15 @@ import (
 	"strings"
 )
 
-var (
-	listModule []string // TODO: refactor with struct
-)
-
 func initializeModule(route *echo.Echo) {
 	route.Use(setCORS)
 
-	listModule = append(listModule, calculateModule.InitializeModule(listModule, route, authUserAPI))
-	//listModule = append(listModule, crmModule.InitializeModule(listModule, route, authUserAPI))
+	utils.UseModule(calculateModule.InitializeModule(route, authUserAPI))
+	utils.UseModule(exampleModule.InitializeModule(route, authUserAPI))
+
+	if structure.SystemConf.ServiceCronJob {
+		cron.Start()
+	}
 }
 
 func setCORS(next echo.HandlerFunc) echo.HandlerFunc {

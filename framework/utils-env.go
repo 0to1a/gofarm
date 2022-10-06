@@ -39,7 +39,7 @@ func (w *Utils) reloadDatabase() {
 	if structure.SystemConf.Database == "" {
 		DatabaseMysql = nil
 	} else if structure.SystemConf.Database == "mysql" {
-		mysql = MysqlDatabase{
+		dbMysql = MysqlDatabase{
 			Username: structure.SystemConf.DatabaseUsername,
 			Password: structure.SystemConf.DatabasePassword,
 			Host:     structure.SystemConf.DatabaseHost,
@@ -63,6 +63,7 @@ func (w *Utils) ReloadSystem() {
 		log.Fatalln(errorEnv, err)
 	}
 
+	cron.Setup()
 	jwtSecret = structure.SystemConf.SecretKey
 	w.reloadDatabase()
 }

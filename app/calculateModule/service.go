@@ -7,7 +7,7 @@ func (w *serviceStructure) plus(n1, n2 int64) int64 {
 	if n1 < 0 || n2 < 0 {
 		return -1
 	}
-	return w.plus(n1, n2)
+	return calculatePlus(n1, n2)
 }
 
 func (w *serviceStructure) multiple(n1, n2 int64) int64 {
