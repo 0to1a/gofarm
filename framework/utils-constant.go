@@ -1,7 +1,10 @@
 package framework
 
+import "framework/app/structure"
+
 type Utils struct{}
 
+var listModule []*structure.ModularStruct
 var utils Utils
 var webserver WebServer
 var mysql MysqlDatabase

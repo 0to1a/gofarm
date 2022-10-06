@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"framework/app/calculateModule"
 	"framework/app/exampleModule"
-	"framework/app/structure"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -12,43 +11,11 @@ import (
 	"strings"
 )
 
-var (
-	listModule []structure.ModularStruct
-)
-
 func initializeModule(route *echo.Echo) {
 	route.Use(setCORS)
 
-	useModule(calculateModule.InitializeModule(route, authUserAPI))
-	useModule(exampleModule.InitializeModule(route, authUserAPI))
-}
-
-func useModule(module structure.ModularStruct) {
-	isExist := false
-	if module.Depending == nil {
-		isExist = true
-	}
-	for _, moduleTarget := range module.Depending {
-		for _, existModule := range listModule {
-			if existModule.Name == moduleTarget.Name {
-				if moduleTarget.MinVersion > existModule.Version && moduleTarget.MinVersion > 0 {
-					log.Fatalln("Module '"+module.Name+"' incompatible", "target version:", moduleTarget.MinVersion, "exist version:", existModule.Version)
-				}
-				if moduleTarget.MaxVersion < existModule.Version && moduleTarget.MaxVersion > 0 {
-					log.Fatalln("Module '"+module.Name+"' incompatible", "target version:", moduleTarget.MaxVersion, "exist version:", existModule.Version)
-				}
-				isExist = true
-				break
-			}
-		}
-		if isExist {
-			break
-		}
-	}
-	if !isExist {
-		log.Fatalln("Module '"+module.Name+"' incompatible", "no depending included")
-	}
-	listModule = append(listModule, module)
+	utils.UseModule(calculateModule.InitializeModule(route, authUserAPI))
+	utils.UseModule(exampleModule.InitializeModule(route, authUserAPI))
 }
 
 func setCORS(next echo.HandlerFunc) echo.HandlerFunc {
