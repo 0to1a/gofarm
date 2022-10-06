@@ -1,3 +1,9 @@
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
+[![GitHub issues](https://img.shields.io/github/issues/0to1a/gofarm)](https://github.com/0to1a/gofarm/issues)
+[![GitHub license](https://img.shields.io/github/license/0to1a/gofarm)](https://github.com/0to1a/gofarm/blob/master/LICENSE)
+![Supported Go Versions](https://img.shields.io/badge/Go-1.16-lightgrey.svg)
+
 # What is GoFarm
 **GoFarm** is an Application Development Framework for especially Backend Developer with Golang. Our goal is to develop easier, standardized, and faster than you code from scratch. Simplify interface and logic structure for easy-to-maintain project.
 
@@ -66,8 +72,8 @@ You can find on GitHub's Release
 - github.com/labstack/echo
 - github.com/go-sql-driver/mysql
 - github.com/doug-martin/goqu
-- github.com/jmoiron/sqlx
 - github.com/golang-jwt/jwt
 - github.com/go-co-op/gocron
 - github.com/go-redis/redis
 - github.com/volatiletech/sqlboiler
+- github.com/golang-migrate/migrate
