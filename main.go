@@ -10,7 +10,7 @@ import (
 var utils framework.Utils
 
 const (
-	goFarmVersion = "1.1.1-alpha"
+	goFarmVersion = "1.1.2-alpha"
 	nameService   = "ProjectName"
 )
 

@@ -3,6 +3,7 @@ module framework
 go 1.16
 
 require (
+	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
 	github.com/doug-martin/goqu/v9 v9.18.0
 	github.com/go-co-op/gocron v1.9.0
 	github.com/go-redis/redis/v8 v8.11.4
@@ -10,5 +11,6 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/labstack/echo/v4 v4.3.0
+	github.com/stretchr/testify v1.8.0 // indirect
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
 )

@@ -53,14 +53,14 @@ func (w *Utils) ReloadSystem() {
 
 	jsonFile, err := os.Open("config.json")
 	if err != nil && structure.SystemConf.ServicePort == 0 {
-		log.Fatalln(errorEnv1)
+		log.Panic(errorEnv1)
 	}
 	defer jsonFile.Close()
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	err = json.Unmarshal(byteValue, &structure.SystemConf)
 	if err != nil {
-		log.Fatalln(errorEnv, err)
+		log.Panic(errorEnv, err)
 	}
 
 	cron.Setup()

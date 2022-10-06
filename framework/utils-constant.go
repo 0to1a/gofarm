@@ -30,6 +30,6 @@ const (
 const (
 	errorEnv     = "Err Environment #U0000:"
 	errorEnv1    = "Err Environment #U0001: config.json not exist"
-	errorModule1 = "Module %s incompatible, target version: %d exist version: %d"
+	errorModule1 = "Module '%s' incompatible, target version: %d exist version: %d"
 	errorModule2 = "Module '%s' incompatible, no depending '%s' included"
 )

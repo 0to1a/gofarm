@@ -20,7 +20,7 @@ func (w *WebServer) CreateService(port int, router *echo.Echo) {
 
 		log.Print("Webserver: Service Running")
 		router.HideBanner = true
-		router.Logger.Fatal(router.Start(serverPort))
+		router.Logger.Panic(router.Start(serverPort))
 	}()
 
 	select {}
@@ -32,12 +32,12 @@ func (w *WebServer) SetupLogFile(logPath string, filenameLog string, filenameErr
 
 	w.logFile, err = os.OpenFile(logPath+"/"+filenameLog, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln("Failed to create request log file:", err)
+		log.Panic("Failed to create request log file:", err)
 	}
 
 	w.logErrFile, err = os.OpenFile(logPath+"/"+filenameError, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln("Failed to create request log file:", err)
+		log.Panic("Failed to create request log file:", err)
 	}
 }
 

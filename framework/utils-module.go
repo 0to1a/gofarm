@@ -9,10 +9,10 @@ import (
 
 func (w *Utils) checkModuleVersion(moduleName string, targetVersion int, moduleTarget structure.ModularStruct) {
 	if moduleTarget.MinVersion > targetVersion && moduleTarget.MinVersion > 0 {
-		log.Fatalf(errorModule1, moduleName, moduleTarget.MinVersion, targetVersion)
+		log.Panicf(errorModule1, moduleName, moduleTarget.MinVersion, targetVersion)
 	}
 	if moduleTarget.MaxVersion < targetVersion && moduleTarget.MaxVersion > 0 {
-		log.Fatalf(errorModule1, moduleName, moduleTarget.MaxVersion, targetVersion)
+		log.Panicf(errorModule1, moduleName, moduleTarget.MaxVersion, targetVersion)
 	}
 }
 
@@ -27,7 +27,7 @@ func (w *Utils) UseModule(module structure.ModularStruct) {
 			}
 		}
 		if !isDetect {
-			log.Fatalf(errorModule2, module.Name, moduleTarget.Name)
+			log.Panicf(errorModule2, module.Name, moduleTarget.Name)
 		}
 	}
 	listModule = append(listModule, &module)
@@ -45,7 +45,7 @@ func (w *Utils) MigrateTools(fs embed.FS) {
 
 	d, err := iofs.New(fs, "migration")
 	if err != nil {
-		log.Fatalln(err)
+		log.Panic(err)
 	}
 
 	if structure.SystemConf.Database == "mysql" {

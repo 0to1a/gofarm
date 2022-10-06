@@ -1,3 +1,4 @@
 log
 .idea
 config.json
+coverage.out

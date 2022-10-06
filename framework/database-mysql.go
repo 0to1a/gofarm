@@ -31,7 +31,7 @@ func (w *MysqlDatabase) Connect() *sql.DB {
 	database, err := sql.Open("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
 	//database, err := sqlx.Connect("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
 	if err != nil {
-		log.Fatalln(err)
+		log.Panic(err)
 	}
 	w.client = database
 	w.Dialect = goqu.Dialect("mysql")
@@ -55,14 +55,14 @@ func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
 	url := w.Username + ":" + w.Password + "@tcp(" + w.Host + ")/" + w.Database + "?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'"
 	m, err := migrate.NewWithSourceInstance("iofs", data, "mysql://"+url)
 	if err != nil {
-		log.Fatalln(err)
+		log.Panic(err)
 	}
 	err = m.Up()
 	if err != nil {
 		if err.Error() == okMigration1 {
 			return
 		}
-		log.Fatalln(err)
+		log.Panic(err)
 	} else {
 		log.Println(okMigration2)
 	}
