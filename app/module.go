@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"framework/app/calculateModule"
 	"framework/app/exampleModule"
+	"framework/app/structure"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -12,14 +13,29 @@ import (
 )
 
 var (
-	listModule []string // TODO: refactor with struct
+	listModule []structure.ModularStruct
 )
 
 func initializeModule(route *echo.Echo) {
 	route.Use(setCORS)
 
-	listModule = append(listModule, calculateModule.InitializeModule(listModule, route, authUserAPI))
-	//listModule = append(listModule, crmModule.InitializeModule(listModule, route, authUserAPI))
+	useModule(calculateModule.InitializeModule(route, authUserAPI))
+}
+
+func useModule(module structure.ModularStruct) {
+	for _, mod := range module.Depending {
+		for _, existModule := range listModule {
+			if existModule.Name == mod.Name {
+				if mod.MinVersion < existModule.Version && mod.MinVersion > 0 {
+					log.Fatalln("Module incompatible")
+				}
+				if mod.MaxVersion > existModule.Version && mod.MaxVersion > 0 {
+					log.Fatalln("Module incompatible")
+				}
+			}
+		}
+	}
+	listModule = append(listModule, module)
 }
 
 func setCORS(next echo.HandlerFunc) echo.HandlerFunc {
