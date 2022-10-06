@@ -18,14 +18,14 @@ func main() {
 	log.Println(nameService)
 
 	utils.ReloadSystem()
-	Redis := framework.RedisDatabase{
-		Prefix:   structure.SystemConf.RedisPrefix,
-		Host:     structure.SystemConf.RedisHost,
-		Password: structure.SystemConf.RedisPassword,
-		Database: structure.SystemConf.RedisDatabase,
-	}
 
 	if structure.SystemConf.ServiceRedis {
+		Redis := framework.RedisDatabase{
+			Prefix:   structure.SystemConf.RedisPrefix,
+			Host:     structure.SystemConf.RedisHost,
+			Password: structure.SystemConf.RedisPassword,
+			Database: structure.SystemConf.RedisDatabase,
+		}
 		Redis.Connect()
 	}
 
