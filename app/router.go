@@ -20,15 +20,14 @@ func ConfigRoute() *echo.Echo {
 	}
 	route := echo.New()
 
-	if structure.SystemConf.ServiceLog {
-		webserver.SetupLogFile("log", "data.log", "error.log")
-		route.Use(webserver.Logger())
+	if structure.SystemConf.ServiceWebserverLog {
+		route.Use(webserver.Logger("log", "data.log", "error.log"))
 	}
 	route.Use(middleware.Recover())
 
 	route.GET("/", appTest)
-	initializeModule(route)
 
+	initializeModule(route)
 	return route
 }
 

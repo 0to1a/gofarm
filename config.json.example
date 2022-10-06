@@ -1,8 +1,7 @@
 {
   "service_port": 8080,
   "secret_key": "12345678",
-  "use_log": true,
-  "use_monitor": true,
+  "use_webserver_log": true,
   "use_cronjob": true,
 
   "database": "mysql",

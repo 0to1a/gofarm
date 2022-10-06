@@ -6,11 +6,10 @@ var (
 
 type configure struct {
 	// Core Configuration - default Framework
-	ServicePort    int    `json:"service_port"`
-	SecretKey      string `json:"secret_key"`
-	ServiceLog     bool   `json:"use_log"`
-	ServiceMonitor bool   `json:"use_monitor"`
-	ServiceCronJob bool   `json:"use_cronjob"`
+	ServicePort         int    `json:"service_port"`
+	SecretKey           string `json:"secret_key"`
+	ServiceWebserverLog bool   `json:"use_webserver_log"`
+	ServiceCronJob      bool   `json:"use_cronjob"`
 
 	// Database Configuration - default Framework
 	Database         string `json:"database"`
