@@ -8,6 +8,7 @@ type serviceStructure struct{}
 var (
 	http      httpStructure
 	service   serviceStructure
+	cron      framework.CronUtils
 	utils     framework.Utils
 	webserver framework.WebServer
 )

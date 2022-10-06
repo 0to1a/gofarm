@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"framework/app/calculateModule"
 	"framework/app/exampleModule"
+	"framework/app/structure"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"log"
@@ -16,6 +17,10 @@ func initializeModule(route *echo.Echo) {
 
 	utils.UseModule(calculateModule.InitializeModule(route, authUserAPI))
 	utils.UseModule(exampleModule.InitializeModule(route, authUserAPI))
+
+	if structure.SystemConf.ServiceCronJob {
+		cron.Start()
+	}
 }
 
 func setCORS(next echo.HandlerFunc) echo.HandlerFunc {

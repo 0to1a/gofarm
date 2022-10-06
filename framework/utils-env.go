@@ -63,6 +63,7 @@ func (w *Utils) ReloadSystem() {
 		log.Fatalln(errorEnv, err)
 	}
 
+	CronUtils{}.Setup()
 	jwtSecret = structure.SystemConf.SecretKey
 	w.reloadDatabase()
 }

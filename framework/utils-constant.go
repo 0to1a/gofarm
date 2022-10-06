@@ -1,13 +1,19 @@
 package framework
 
-import "framework/app/structure"
+import (
+	"framework/app/structure"
+	"github.com/go-co-op/gocron"
+)
 
 type Utils struct{}
 
-var listModule []*structure.ModularStruct
-var utils Utils
-var webserver WebServer
-var mysql MysqlDatabase
+var (
+	listModule []*structure.ModularStruct
+	utils      Utils
+	webserver  WebServer
+	mysql      MysqlDatabase
+	scheduler  *gocron.Scheduler
+)
 
 const (
 	SeedOK        = 200

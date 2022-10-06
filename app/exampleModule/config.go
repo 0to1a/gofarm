@@ -26,6 +26,11 @@ func InitializeModule(route *echo.Echo, authMiddleware echo.MiddlewareFunc) stru
 		httpRoute(route)
 	}
 
+	initializeCron()
 	log.Println(">> Attach:", nameModule, versionModule)
 	return config
+}
+
+func initializeCron() {
+	cron.AddEverySecond(60, service.CronHelloWorld)
 }

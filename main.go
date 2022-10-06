@@ -34,9 +34,6 @@ func main() {
 	//if structure.SystemConf.ServiceMonitor {
 	//	utils.UseMonitor()
 	//}
-	if structure.SystemConf.ServiceCronJob {
-		app.CronJobMaker()
-	}
 	if structure.SystemConf.ServiceRedis {
 		Redis.Connect()
 	}

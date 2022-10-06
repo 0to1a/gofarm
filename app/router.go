@@ -11,6 +11,7 @@ import (
 var (
 	utils     framework.Utils
 	webserver framework.WebServer
+	cron      framework.CronUtils
 )
 
 func ConfigRoute() *echo.Echo {
