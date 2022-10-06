@@ -10,7 +10,7 @@ import (
 var utils framework.Utils
 
 const (
-	goFarmVersion = "1.1.0-alpha"
+	goFarmVersion = "1.1.1-alpha"
 	nameService   = "ProjectName"
 )
 
@@ -38,7 +38,9 @@ func main() {
 		Redis.Connect()
 	}
 
-	WebService.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
+	if structure.SystemConf.ServicePort != 0 {
+		WebService.CreateService(structure.SystemConf.ServicePort, app.ConfigRoute())
 
-	select {}
+		select {}
+	}
 }
