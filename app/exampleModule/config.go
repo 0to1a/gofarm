@@ -1,10 +1,14 @@
 package exampleModule
 
 import (
+	"embed"
 	"framework/app/structure"
 	"github.com/labstack/echo/v4"
 	"log"
 )
+
+//go:embed migration/*.sql
+var fsMigrate embed.FS
 
 const (
 	nameModule    = "Example CRUD Module"
@@ -26,7 +30,9 @@ func InitializeModule(route *echo.Echo, authMiddleware echo.MiddlewareFunc) stru
 		httpRoute(route)
 	}
 
+	utils.MigrateTools(fsMigrate)
 	initializeCron()
+
 	log.Println(">> Attach:", nameModule, versionModule)
 	return config
 }

@@ -11,24 +11,20 @@ var (
 	listModule []*structure.ModularStruct
 	utils      Utils
 	webserver  WebServer
-	mysql      MysqlDatabase
+	dbMysql    MysqlDatabase
+	cron       CronUtils
 	scheduler  *gocron.Scheduler
 )
 
 const (
-	SeedOK        = 200
-	ErrSeedNoRows = -1
-	ErrMigration  = -2
-	ErrNoRows     = -404
-	ErrQuery      = -500
+	SeedOK    = 200
+	ErrNoRows = -404
+	ErrQuery  = -500
 )
 
 const (
-	okMigration1    = "No Migration Unit: "
-	errorMigration1 = "Err Migration #S0001: no indexing function"
-	errorMigration2 = "Err Migration #S0002: database not init"
-	errorMigration3 = "Err Migration #S0003: database can't create table"
-	errorMigration4 = "Err Migration #S0004: problem to insert data"
+	okMigration1 = "no change"
+	okMigration2 = "migration success"
 )
 
 const (

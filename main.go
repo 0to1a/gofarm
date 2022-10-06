@@ -25,10 +25,6 @@ func main() {
 		Database: structure.SystemConf.RedisDatabase,
 	}
 
-	// TODO: create migration module
-	//if structure.SystemConf.UseMigration && structure.SystemConf.DatabaseMysql != "" {
-	//	migration.SeedDatabase()
-	//}
 	if structure.SystemConf.ServiceRedis {
 		Redis.Connect()
 	}
