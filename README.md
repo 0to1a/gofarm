@@ -36,7 +36,7 @@ go get ./...
 ## Concept
 - **Rapid Development:** Analyzed behavior & Designed for Backend Engineer. Make better to maintain and rapid development. Reuse your modules and connect the dot quickly.
 - **Performance First:** Framework with a small footprint, make it not costly for production-grade.
-- **Dual-Architecture:** Using Microservices modular concept, but can deploy as single apps / Monolith. Just move the module to a new project, and the app will separate & become a microservice.
+- **Dual-Architecture:** Using Microservices concept, but can deploy as single apps / Monolith. Just move the module to a new project, and the app will separate & become a microservice.
 - **Structured:** Single pattern of writing code (like MVC), makes other developers read & maintain easily. Minimizing the learning curve is our focus.
 - **Clean Deployment:** Focus on a clean structure to make the sure better deployment.
 
