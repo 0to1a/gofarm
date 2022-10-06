@@ -41,10 +41,10 @@ Golang version 1.16+ and Go-Mod supported.
 ## Feature on Next Development
 - [ ] Better logging system
 - [ ] GoFarm Assistant, like PHP Artisan-Laravel / Lumen
-- [ ] Continuable framework scaling
+- [x] Continuable framework scaling & dependency module
 - [ ] Unit test, framework coverage
 - [ ] Unit test, project structure
-- [ ] Database migration pattern / tools
+- [x] Database migration pattern / tools
 - [ ] Postgres database connection
 - [ ] Sqlite database connection
 - [ ] Usage Documentation & Best-practice guidance
