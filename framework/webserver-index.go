@@ -1,4 +1,4 @@
-package webserver
+package framework
 
 import (
 	"fmt"
@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-var (
-	logFile    *os.File = nil
-	logErrFile *os.File = nil
-)
+type WebServer struct {
+	logFile    *os.File
+	logErrFile *os.File
+}
 
-func CreateService(port int, router *echo.Echo) {
+func (w *WebServer) CreateService(port int, router *echo.Echo) {
 	go func() {
 		serverPort := ":" + strconv.Itoa(port)
 
@@ -26,35 +26,26 @@ func CreateService(port int, router *echo.Echo) {
 	select {}
 }
 
-func SetLogFile(logPath string, filenameLog string, filenameError string) {
+func (w *WebServer) SetupLogFile(logPath string, filenameLog string, filenameError string) {
 	_ = os.MkdirAll(logPath, os.ModePerm)
 	var err error
 
-	logFile, err = os.OpenFile(logPath+"/"+filenameLog, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	w.logFile, err = os.OpenFile(logPath+"/"+filenameLog, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to create request log file:", err)
 	}
 
-	logErrFile, err = os.OpenFile(logPath+"/"+filenameError, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	w.logErrFile, err = os.OpenFile(logPath+"/"+filenameError, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to create request log file:", err)
 	}
 }
 
-func ResponseAPI(response int, message string, data interface{}) map[string]interface{} {
-	return map[string]interface{}{
-		"response":  response,
-		"message":   message,
-		"data":      data,
-		"timestamp": time.Now().Unix(),
-	}
+func (w *WebServer) ResultAPI(c echo.Context, response int, message string, data interface{}) error {
+	return c.JSON(response, utils.GenerateStandardAPI(response, message, data))
 }
 
-func ResultAPI(c echo.Context, response int, message string, data interface{}) error {
-	return c.JSON(response, ResponseAPI(response, message, data))
-}
-
-func ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
+func (w *WebServer) ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
 	response := 0
 	switch v := mapJson["response"].(type) {
 	case int:
@@ -65,7 +56,7 @@ func ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
 	return c.JSON(response, mapJson)
 }
 
-func Logger() echo.MiddlewareFunc {
+func (w *WebServer) Logger() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
 			req := c.Request()
@@ -79,10 +70,10 @@ func Logger() echo.MiddlewareFunc {
 
 			if err == nil {
 				format := fmt.Sprintf("%s\t%s\t\t%s\n", time.Now().Format(timeFormat), req.RequestURI, stop.Sub(start).String())
-				_, _ = logFile.WriteString(format)
+				_, _ = w.logFile.WriteString(format)
 			} else {
 				format := fmt.Sprintf("%s\t%s\t%s\t\t%s\n", time.Now().Format(timeFormat), req.RequestURI, stop.Sub(start).String(), err.Error())
-				_, _ = logErrFile.WriteString(format)
+				_, _ = w.logErrFile.WriteString(format)
 			}
 			return nil
 		}

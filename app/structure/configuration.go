@@ -5,12 +5,14 @@ var (
 )
 
 type configure struct {
+	// Core Configuration - default Framework
 	ServicePort    int    `json:"service_port"`
 	SecretKey      string `json:"secret_key"`
 	ServiceLog     bool   `json:"use_log"`
 	ServiceMonitor bool   `json:"use_monitor"`
 	ServiceCronJob bool   `json:"use_cronjob"`
 
+	// Database Configuration - default Framework
 	Database         string `json:"database"`
 	DatabaseHost     string `json:"database_host"`
 	DatabaseUsername string `json:"database_username"`
@@ -18,8 +20,10 @@ type configure struct {
 	DatabaseName     string `json:"database_name"`
 	UseMigration     bool   `json:"use_migration"`
 
+	// Redis Configuration - default Framework
 	ServiceRedis  bool   `json:"use_redis"`
 	RedisHost     string `json:"redis_host"`
 	RedisPassword string `json:"redis_password"`
 	RedisDatabase int    `json:"redis_database"`
+	RedisPrefix   string `json:"redis_prefix"`
 }

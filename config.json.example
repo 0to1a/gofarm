@@ -15,5 +15,6 @@
   "use_redis": true,
   "redis_host": "localhost:6379",
   "redis_password": "",
-  "redis_database": 0
+  "redis_database": 0,
+  "redis_prefix" : "goFarm"
 }

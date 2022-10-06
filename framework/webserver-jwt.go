@@ -1,18 +1,21 @@
-package webserver
+package framework
 
 import (
 	"fmt"
-	"framework/framework/utils"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
 
-func JWTCheckToken(tokenString string) (*jwt.Token, bool) {
+var (
+	jwtSecret string
+)
+
+func (w *WebServer) JWTCheckToken(tokenString string) (*jwt.Token, bool) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(utils.JwtSecret), nil
+		return []byte(jwtSecret), nil
 	})
 	if err != nil {
 		return nil, false
@@ -23,14 +26,14 @@ func JWTCheckToken(tokenString string) (*jwt.Token, bool) {
 	return token, true
 }
 
-func JWTCreateToken(username string, timeInMinutes int) (string, error) {
+func (w *WebServer) JWTCreateToken(username string, timeInMinutes int) (string, error) {
 	var err error
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["username"] = username
 	atClaims["exp"] = time.Now().Add(time.Minute * time.Duration(timeInMinutes)).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	secret := utils.JwtSecret
+	secret := jwtSecret
 	token, err := at.SignedString([]byte(secret))
 	if err != nil {
 		return "", err
