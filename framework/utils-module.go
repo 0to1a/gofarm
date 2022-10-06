@@ -7,23 +7,27 @@ import (
 	"log"
 )
 
+func (w *Utils) checkModuleVersion(moduleName string, targetVersion int, moduleTarget structure.ModularStruct) {
+	if moduleTarget.MinVersion > targetVersion && moduleTarget.MinVersion > 0 {
+		log.Fatalf(errorModule1, moduleName, moduleTarget.MinVersion, targetVersion)
+	}
+	if moduleTarget.MaxVersion < targetVersion && moduleTarget.MaxVersion > 0 {
+		log.Fatalf(errorModule1, moduleName, moduleTarget.MaxVersion, targetVersion)
+	}
+}
+
 func (w *Utils) UseModule(module structure.ModularStruct) {
 	for _, moduleTarget := range module.Depending {
 		isDetect := false
 		for _, existModule := range listModule {
 			if existModule.Name == moduleTarget.Name {
-				if moduleTarget.MinVersion > existModule.Version && moduleTarget.MinVersion > 0 {
-					log.Fatalln("Module '"+module.Name+"' incompatible,", "target version:", moduleTarget.MinVersion, "exist version:", existModule.Version)
-				}
-				if moduleTarget.MaxVersion < existModule.Version && moduleTarget.MaxVersion > 0 {
-					log.Fatalln("Module '"+module.Name+"' incompatible,", "target version:", moduleTarget.MaxVersion, "exist version:", existModule.Version)
-				}
+				w.checkModuleVersion(existModule.Name, existModule.Version, moduleTarget)
 				isDetect = true
 				break
 			}
 		}
 		if !isDetect {
-			log.Fatalln("Module '"+module.Name+"' incompatible,", "no depending '"+moduleTarget.Name+"' included")
+			log.Fatalf(errorModule2, module.Name, moduleTarget.Name)
 		}
 	}
 	listModule = append(listModule, &module)
