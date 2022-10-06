@@ -12,15 +12,15 @@ const (
 )
 
 func InitializeModule(route *echo.Echo, authMiddleware echo.MiddlewareFunc) structure.ModularStruct {
-	if route != nil {
-		httpRoute(route)
-	}
-
-	log.Println(">> Attach:", nameModule, versionModule)
 	config := structure.ModularStruct{
 		Name:      nameModule,
 		Version:   versionModule,
 		Depending: nil,
 	}
+	if route != nil {
+		httpRoute(route)
+	}
+
+	log.Println(">> Attach:", nameModule, versionModule)
 	return config
 }

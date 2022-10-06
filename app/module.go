@@ -20,20 +20,33 @@ func initializeModule(route *echo.Echo) {
 	route.Use(setCORS)
 
 	useModule(calculateModule.InitializeModule(route, authUserAPI))
+	useModule(exampleModule.InitializeModule(route, authUserAPI))
 }
 
 func useModule(module structure.ModularStruct) {
-	for _, mod := range module.Depending {
+	isExist := false
+	if module.Depending == nil {
+		isExist = true
+	}
+	for _, moduleTarget := range module.Depending {
 		for _, existModule := range listModule {
-			if existModule.Name == mod.Name {
-				if mod.MinVersion < existModule.Version && mod.MinVersion > 0 {
-					log.Fatalln("Module incompatible")
+			if existModule.Name == moduleTarget.Name {
+				if moduleTarget.MinVersion > existModule.Version && moduleTarget.MinVersion > 0 {
+					log.Fatalln("Module '"+module.Name+"' incompatible", "target version:", moduleTarget.MinVersion, "exist version:", existModule.Version)
 				}
-				if mod.MaxVersion > existModule.Version && mod.MaxVersion > 0 {
-					log.Fatalln("Module incompatible")
+				if moduleTarget.MaxVersion < existModule.Version && moduleTarget.MaxVersion > 0 {
+					log.Fatalln("Module '"+module.Name+"' incompatible", "target version:", moduleTarget.MaxVersion, "exist version:", existModule.Version)
 				}
+				isExist = true
+				break
 			}
 		}
+		if isExist {
+			break
+		}
+	}
+	if !isExist {
+		log.Fatalln("Module '"+module.Name+"' incompatible", "no depending included")
 	}
 	listModule = append(listModule, module)
 }
