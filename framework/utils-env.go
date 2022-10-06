@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func (w *Utils) ReloadSystem() {
+func (w *Utils) reloadSystemByEnv() {
 	v := reflect.ValueOf(&structure.SystemConf).Elem()
 	for j := 0; j < v.NumField(); j++ {
 		jsonName := v.Type().Field(j).Tag.Get("json")
@@ -33,6 +33,23 @@ func (w *Utils) ReloadSystem() {
 			v.Field(j).SetString(input)
 		}
 	}
+}
+
+func (w *Utils) reloadDatabase() {
+	if structure.SystemConf.Database == "" {
+		DatabaseMysql = nil
+	} else if structure.SystemConf.Database == "mysql" {
+		mysql = MysqlDatabase{
+			Username: structure.SystemConf.DatabaseUsername,
+			Password: structure.SystemConf.DatabasePassword,
+			Host:     structure.SystemConf.DatabaseHost,
+			Database: structure.SystemConf.DatabaseName,
+		}
+	}
+}
+
+func (w *Utils) ReloadSystem() {
+	w.reloadSystemByEnv()
 
 	jsonFile, err := os.Open("config.json")
 	if err != nil && structure.SystemConf.ServicePort == 0 {
@@ -47,15 +64,5 @@ func (w *Utils) ReloadSystem() {
 	}
 
 	jwtSecret = structure.SystemConf.SecretKey
-
-	if structure.SystemConf.Database == "" {
-		DatabaseMysql = nil
-	} else if structure.SystemConf.Database == "mysql" {
-		mysql = MysqlDatabase{
-			Username: structure.SystemConf.DatabaseUsername,
-			Password: structure.SystemConf.DatabasePassword,
-			Host:     structure.SystemConf.DatabaseHost,
-			Database: structure.SystemConf.DatabaseName,
-		}
-	}
+	w.reloadDatabase()
 }
