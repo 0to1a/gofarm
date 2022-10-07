@@ -56,13 +56,7 @@ func (w *MysqlDatabase) CheckClient() *sql.DB {
 	}
 }
 
-func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
-	url := w.Username + ":" + w.Password + "@tcp(" + w.Host + ")/" + w.Database + "?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'"
-	m, err := migrate.NewWithSourceInstance("iofs", data, "mysql://"+url)
-	if err != nil {
-		log.Panic(err)
-	}
-	err = m.Up()
+func (w *MysqlDatabase) migrateHandling(err error) {
 	if err != nil {
 		if err.Error() == okMigration1 {
 			return
@@ -71,6 +65,15 @@ func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
 	} else {
 		log.Println(okMigration2)
 	}
+}
+
+func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
+	url := w.Username + ":" + w.Password + "@tcp(" + w.Host + ")/" + w.Database + "?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'"
+	m, err := migrate.NewWithSourceInstance("iofs", data, "mysql://"+url)
+	if err != nil {
+		log.Panic(err)
+	}
+	w.migrateHandling(m.Up())
 }
 
 func (w *MysqlDatabase) TableCheck(table string) bool {
