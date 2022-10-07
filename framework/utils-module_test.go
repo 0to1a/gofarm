@@ -125,7 +125,8 @@ func TestMigrateTools(t *testing.T) {
 	t.Run("Using migration and mock", func(t *testing.T) {
 		structure.SystemConf.UseMigration = true
 		structure.SystemConf.Database = "mysql"
-		assert.Panic(t, "Error 1045: Access denied for user ''@'localhost' (using password: NO)", func() {
+		dbMysql.Host = "127.0.0.1:13306"
+		assert.Panic(t, "dial tcp 127.0.0.1:13306: connect: connection refused", func() {
 			utils.MigrateTools(fsSample)
 		})
 	})
