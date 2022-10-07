@@ -53,13 +53,13 @@ func TestSetupLogFile(t *testing.T) {
 		webserver.logErrFile.Close()
 	})
 	t.Run("Filename log error", func(t *testing.T) {
-		assert.Panic(t, "Failed to create request log file:open log-test/|hello: The filename, directory name, or volume label syntax is incorrect.", func() {
-			webserver.SetupLogFile("log-test", "|hello", "world")
+		assert.Panic(t, "Failed to create request log file:open log-test/: is a directory", func() {
+			webserver.SetupLogFile("log-test", "", "world")
 		})
 	})
 	t.Run("Filename error", func(t *testing.T) {
-		assert.Panic(t, "Failed to create request log file:open log-test/|world: The filename, directory name, or volume label syntax is incorrect.", func() {
-			webserver.SetupLogFile("log-test", "hello", "|world")
+		assert.Panic(t, "Failed to create request log file:open log-test/: is a directory", func() {
+			webserver.SetupLogFile("log-test", "hello", "")
 		})
 		webserver.logFile.Close()
 	})
