@@ -27,7 +27,7 @@ type RedisDatabase struct {
 	client   *redis.Client
 }
 
-func (w RedisDatabase) Connect() *redis.Client {
+func (w *RedisDatabase) Connect() *redis.Client {
 	var clientRedis *redis.Client
 	clientRedis = redis.NewClient(&redis.Options{
 		Addr:     w.Host,
@@ -47,7 +47,7 @@ func (w RedisDatabase) Connect() *redis.Client {
 	return clientRedis
 }
 
-func (w RedisDatabase) CheckClient() *redis.Client {
+func (w *RedisDatabase) CheckClient() *redis.Client {
 	if RedisDB == nil && w.client == nil {
 		return nil
 	} else if w.client != nil {
@@ -57,7 +57,7 @@ func (w RedisDatabase) CheckClient() *redis.Client {
 	}
 }
 
-func (w RedisDatabase) CheckPrefix() string {
+func (w *RedisDatabase) CheckPrefix() string {
 	if RedisPrefix == "" && w.Prefix == "" {
 		return ""
 	} else if w.Prefix != "" {
@@ -67,7 +67,7 @@ func (w RedisDatabase) CheckPrefix() string {
 	}
 }
 
-func (w RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, data string) bool {
+func (w *RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, data string) bool {
 	var clientRedis *redis.Client
 	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
@@ -84,7 +84,7 @@ func (w RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, da
 	return true
 }
 
-func (w RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes int, data string) bool {
+func (w *RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes int, data string) bool {
 	var clientRedis *redis.Client
 	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
@@ -110,7 +110,7 @@ func (w RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes
 	return w.Set(urlPath, payload, timeInMinutes, str)
 }
 
-func (w RedisDatabase) Get(urlPath string, payload string) (bool, string) {
+func (w *RedisDatabase) Get(urlPath string, payload string) (bool, string) {
 	var clientRedis *redis.Client
 	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false, ""
@@ -128,7 +128,7 @@ func (w RedisDatabase) Get(urlPath string, payload string) (bool, string) {
 	return true, res
 }
 
-func (w RedisDatabase) GetCompress(urlPath string, payload string) (bool, string) {
+func (w *RedisDatabase) GetCompress(urlPath string, payload string) (bool, string) {
 	isOkay, res := w.Get(urlPath, payload)
 	if !isOkay {
 		return isOkay, res
@@ -145,7 +145,7 @@ func (w RedisDatabase) GetCompress(urlPath string, payload string) (bool, string
 	return isOkay, string(decompress)
 }
 
-func (w RedisDatabase) SetJson(c echo.Context, timeInMinutes int, data map[string]interface{}) error {
+func (w *RedisDatabase) SetJson(c echo.Context, timeInMinutes int, data map[string]interface{}) error {
 	var bodyBytes []byte
 	if c.Request().Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
@@ -158,7 +158,7 @@ func (w RedisDatabase) SetJson(c echo.Context, timeInMinutes int, data map[strin
 	return webserver.ResultAPIFromJson(c, data)
 }
 
-func (w RedisDatabase) GetJson(c echo.Context) error {
+func (w *RedisDatabase) GetJson(c echo.Context) error {
 	var bodyBytes []byte
 	if c.Request().Body != nil {
 		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
@@ -176,7 +176,15 @@ func (w RedisDatabase) GetJson(c echo.Context) error {
 	return webserver.ResultAPIFromJson(c, jsonMap)
 }
 
-func (w RedisDatabase) Remove(urlPath string, payload string) bool {
+func (w *RedisDatabase) removeData(clientRedis *redis.Client, hash string) error {
+	err := clientRedis.Del(context.Background(), hash).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (w *RedisDatabase) Remove(urlPath string, payload string) bool {
 	var clientRedis *redis.Client
 	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false
@@ -187,7 +195,7 @@ func (w RedisDatabase) Remove(urlPath string, payload string) bool {
 		hash += "*"
 		iter := clientRedis.Scan(context.Background(), 0, hash, 0).Iterator()
 		for iter.Next(context.Background()) {
-			err := clientRedis.Del(context.Background(), iter.Val()).Err()
+			err := w.removeData(clientRedis, iter.Val())
 			if err != nil {
 				log.Println("redis", err)
 				return false
@@ -195,7 +203,7 @@ func (w RedisDatabase) Remove(urlPath string, payload string) bool {
 		}
 	} else {
 		hash += utils.SeedName(payload)
-		err := clientRedis.Del(context.Background(), hash).Err()
+		err := w.removeData(clientRedis, hash)
 		if err != nil {
 			log.Println("redis", err)
 			return false
