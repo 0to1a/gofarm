@@ -5,10 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/base64"
-	"encoding/json"
-	"errors"
 	"github.com/go-redis/redis/v8"
-	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"log"
 	"time"
@@ -143,37 +140,6 @@ func (w *RedisDatabase) GetCompress(urlPath string, payload string) (bool, strin
 	decompress, err := ioutil.ReadAll(r)
 
 	return isOkay, string(decompress)
-}
-
-func (w *RedisDatabase) SetJson(c echo.Context, timeInMinutes int, data map[string]interface{}) error {
-	var bodyBytes []byte
-	if c.Request().Body != nil {
-		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
-	}
-	c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
-
-	jsonByte, _ := json.Marshal(data)
-	w.SetCompress(c.Request().URL.Path, string(bodyBytes), timeInMinutes, string(jsonByte))
-
-	return webserver.ResultAPIFromJson(c, data)
-}
-
-func (w *RedisDatabase) GetJson(c echo.Context) error {
-	var bodyBytes []byte
-	if c.Request().Body != nil {
-		bodyBytes, _ = ioutil.ReadAll(c.Request().Body)
-	}
-	c.Request().Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
-
-	isCache, jsonString := w.GetCompress(c.Request().URL.Path, string(bodyBytes))
-	if !isCache {
-		return errors.New("no cache")
-	}
-
-	jsonMap := make(map[string]interface{})
-	_ = json.Unmarshal([]byte(jsonString), &jsonMap)
-
-	return webserver.ResultAPIFromJson(c, jsonMap)
 }
 
 func (w *RedisDatabase) removeData(clientRedis *redis.Client, hash string) error {
