@@ -37,6 +37,17 @@ func TestCheckModuleVersion(t *testing.T) {
 	})
 }
 
+func createModule(module1 structure.ModularStruct, module2 structure.ModularStruct) []*structure.ModularStruct {
+	listModule = []*structure.ModularStruct{}
+	var expected []*structure.ModularStruct
+	module2.Depending = append(module2.Depending, module1)
+	expected = append(expected, &module1)
+	expected = append(expected, &module2)
+	utils.UseModule(module1)
+	utils.UseModule(module2)
+	return expected
+}
+
 func TestUseModule(t *testing.T) {
 	module1 := structure.ModularStruct{
 		Name:    "module1",
@@ -56,36 +67,23 @@ func TestUseModule(t *testing.T) {
 		assert.Equal(t, listModule, expected)
 	})
 	t.Run("Module multiple load", func(t *testing.T) {
-		listModule = []*structure.ModularStruct{}
-		var expected []*structure.ModularStruct
-		module2.Depending = append(module2.Depending, module1)
-		expected = append(expected, &module1)
-		expected = append(expected, &module2)
-		utils.UseModule(module1)
-		utils.UseModule(module2)
+		expected := createModule(module1, module2)
 
 		assert.Equal(t, listModule, expected)
 	})
 	t.Run("Module depending success", func(t *testing.T) {
-		listModule = []*structure.ModularStruct{}
-		var expected []*structure.ModularStruct
 		module1.MinVersion = 1
 		module1.MaxVersion = 0
 		module2.Depending = append(module2.Depending, module1)
-		expected = append(expected, &module1)
-		expected = append(expected, &module2)
-		utils.UseModule(module1)
-		utils.UseModule(module2)
+		expected := createModule(module1, module2)
 
 		assert.Equal(t, listModule, expected)
 	})
 	t.Run("No module find", func(t *testing.T) {
 		listModule = []*structure.ModularStruct{}
-		var expected []*structure.ModularStruct
 		module1.MinVersion = 1
 		module1.MaxVersion = 0
 		module2.Depending = append(module2.Depending, module1)
-		expected = append(expected, &module2)
 
 		assert.Panic(t, "Module 'module2' incompatible, no depending 'module1' included", func() {
 			utils.UseModule(module2)
