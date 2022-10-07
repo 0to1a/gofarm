@@ -67,7 +67,7 @@ func TestMigrateDatabase(t *testing.T) {
 		dbMysql.Username = "test"
 		dbMysql.Password = "test"
 		dbMysql.Database = "test"
-		assert.Panic(t, "dial tcp [::1]:33306: connectex: No connection could be made because the target machine actively refused it.", func() {
+		assert.Panic(t, "dial tcp [::1]:33306: connect: connection refused", func() {
 			dbMysql.Connect()
 			dbMysql.MigrateDatabase(d)
 		})
