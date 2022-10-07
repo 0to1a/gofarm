@@ -27,18 +27,23 @@ type MysqlDatabase struct {
 	client   *sql.DB
 }
 
-func (w *MysqlDatabase) Connect() *sql.DB {
-	database, err := sql.Open("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
-	//database, err := sqlx.Connect("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
-	if err != nil {
-		log.Panic(err)
-	}
+func (w *MysqlDatabase) connectSuccess(database *sql.DB) *sql.DB {
 	w.client = database
 	w.Dialect = goqu.Dialect("mysql")
 	DatabaseMysql = database
 	DialectMysql = goqu.Dialect("mysql")
 
 	return database
+}
+
+func (w *MysqlDatabase) Connect() *sql.DB {
+	database, err := sql.Open("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
+	//database, err := sqlx.Connect("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return w.connectSuccess(database)
 }
 
 func (w *MysqlDatabase) CheckClient() *sql.DB {
