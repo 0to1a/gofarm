@@ -1,18 +1,18 @@
 package framework
 
 import (
-	"embed"
 	"framework/app/structure"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"io/fs"
 	"log"
 )
 
 func (w *Utils) checkModuleVersion(moduleName string, targetVersion int, moduleTarget structure.ModularStruct) {
 	if moduleTarget.MinVersion > targetVersion && moduleTarget.MinVersion > 0 {
-		log.Fatalf(errorModule1, moduleName, moduleTarget.MinVersion, targetVersion)
+		log.Panicf(errorModule1, moduleName, moduleTarget.MinVersion, targetVersion)
 	}
 	if moduleTarget.MaxVersion < targetVersion && moduleTarget.MaxVersion > 0 {
-		log.Fatalf(errorModule1, moduleName, moduleTarget.MaxVersion, targetVersion)
+		log.Panicf(errorModule1, moduleName, moduleTarget.MaxVersion, targetVersion)
 	}
 }
 
@@ -27,25 +27,25 @@ func (w *Utils) UseModule(module structure.ModularStruct) {
 			}
 		}
 		if !isDetect {
-			log.Fatalf(errorModule2, module.Name, moduleTarget.Name)
+			log.Panicf(errorModule2, module.Name, moduleTarget.Name)
 		}
 	}
 	listModule = append(listModule, &module)
 }
 
-func (w *Utils) MigrateTools(fs embed.FS) {
+func (w *Utils) MigrateTools(fs fs.FS) {
 	if !structure.SystemConf.UseMigration {
 		return
 	}
 
-	list, _ := fs.ReadDir("migration")
-	if len(list) == 0 {
-		return // Error no folder migration
-	}
+	//_, err := fs.Open("migration")
+	//if err != nil {
+	//	return // Error no folder migration
+	//}
 
 	d, err := iofs.New(fs, "migration")
 	if err != nil {
-		log.Fatalln(err)
+		return // Error no folder migration
 	}
 
 	if structure.SystemConf.Database == "mysql" {

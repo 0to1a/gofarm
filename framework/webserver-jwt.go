@@ -35,7 +35,7 @@ func (w *WebServer) JWTCreateToken(username string, timeInMinutes int) (string, 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	secret := jwtSecret
 	token, err := at.SignedString([]byte(secret))
-	if err != nil {
+	if err != nil || len(secret) == 0 {
 		return "", err
 	}
 	return token, nil

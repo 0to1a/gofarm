@@ -3,7 +3,6 @@ package framework
 import (
 	"encoding/json"
 	"framework/app/structure"
-	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -20,7 +19,7 @@ func (w *Utils) reloadSystemByEnv() {
 		if typeName == "int" {
 			tmp, _ := strconv.ParseInt(input, 10, 64)
 			v.Field(j).SetInt(tmp)
-		} else if typeName == "float" {
+		} else if typeName == "float" || typeName == "float64" {
 			tmp, _ := strconv.ParseFloat(input, 64)
 			v.Field(j).SetFloat(tmp)
 		} else if typeName == "bool" {
@@ -31,6 +30,16 @@ func (w *Utils) reloadSystemByEnv() {
 			}
 		} else {
 			v.Field(j).SetString(input)
+		}
+	}
+}
+
+func (w *Utils) reloadSystemByJson(filename string, stat func(filename string) (os.FileInfo, error), readFile func(filename string) ([]byte, error)) {
+	if _, err := stat(filename); err == nil {
+		byteValue, _ := readFile(filename)
+		err = json.Unmarshal(byteValue, &structure.SystemConf)
+		if err != nil {
+			log.Panic(errorEnv, err)
 		}
 	}
 }
@@ -50,17 +59,10 @@ func (w *Utils) reloadDatabase() {
 
 func (w *Utils) ReloadSystem() {
 	w.reloadSystemByEnv()
+	w.reloadSystemByJson("config.json", os.Stat, os.ReadFile)
 
-	jsonFile, err := os.Open("config.json")
-	if err != nil && structure.SystemConf.ServicePort == 0 {
-		log.Fatalln(errorEnv1)
-	}
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	err = json.Unmarshal(byteValue, &structure.SystemConf)
-	if err != nil {
-		log.Fatalln(errorEnv, err)
+	if structure.SystemConf.ServicePort == 0 {
+		log.Panic(errorEnv1)
 	}
 
 	cron.Setup()
