@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
+const (
+	miniRedisError = "an error '%s' was not expected when opening a stub database connection"
+)
+
 func TestConnectRedis(t *testing.T) {
 	mr, err := miniredis.Run()
 	if err != nil {
-		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		log.Fatalf(miniRedisError, err)
 	}
 
-	t.Run("Error no connection", func(t *testing.T) {
+	t.Run("Without connection", func(t *testing.T) {
 		redisConf := RedisDatabase{Host: mr.Addr(), Password: "hello", Database: 10}
 		assert.Equal(t, (*redis.Client)(nil), redisConf.Connect())
 	})
@@ -28,11 +32,11 @@ func TestConnectRedis(t *testing.T) {
 func TestCheckClientRedis(t *testing.T) {
 	mr, err := miniredis.Run()
 	if err != nil {
-		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		log.Fatalf(miniRedisError, err)
 	}
 	redisMock := RedisDatabase{Host: mr.Addr()}
 
-	t.Run("Error no connection", func(t *testing.T) {
+	t.Run("Without connection", func(t *testing.T) {
 		redisMock.client = nil
 		RedisDB = nil
 		assert.Equal(t, (*redis.Client)(nil), redisMock.CheckClient())
@@ -52,7 +56,7 @@ func TestCheckClientRedis(t *testing.T) {
 func TestCheckPrefix(t *testing.T) {
 	redisMock := RedisDatabase{}
 
-	t.Run("Error no connection", func(t *testing.T) {
+	t.Run("Not connect", func(t *testing.T) {
 		redisMock.Prefix = ""
 		RedisPrefix = ""
 		assert.Equal(t, "", redisMock.CheckPrefix())
@@ -74,7 +78,7 @@ func TestCheckPrefix(t *testing.T) {
 func TestSetCompress(t *testing.T) {
 	mr, err := miniredis.Run()
 	if err != nil {
-		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		log.Fatalf(miniRedisError, err)
 	}
 	redisMock := RedisDatabase{Host: mr.Addr()}
 	redisMock.Connect()
@@ -103,7 +107,7 @@ func TestSetCompress(t *testing.T) {
 		output := redisMock.SetCompress("test", "1", 1, "data")
 		assert.Equal(t, false, output)
 	})
-	t.Run("Error no connection", func(t *testing.T) {
+	t.Run("No client", func(t *testing.T) {
 		redisMock.client = nil
 		RedisDB = nil
 		output := redisMock.Set("test", "1", 1, "data")
@@ -114,7 +118,7 @@ func TestSetCompress(t *testing.T) {
 func TestGetCompress(t *testing.T) {
 	mr, err := miniredis.Run()
 	if err != nil {
-		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		log.Fatalf(miniRedisError, err)
 	}
 	redisMock := RedisDatabase{Host: mr.Addr()}
 	redisMock.Connect()
@@ -147,7 +151,7 @@ func TestGetCompress(t *testing.T) {
 		isOkay, _ := redisMock.GetCompress("test", "1")
 		assert.Equal(t, false, isOkay)
 	})
-	t.Run("Error disconnect", func(t *testing.T) {
+	t.Run("Disconnect server", func(t *testing.T) {
 		mr.Close()
 		isOkay, _ := redisMock.Get("test", "1")
 		assert.Equal(t, false, isOkay)
@@ -169,7 +173,7 @@ func TestGetCompress(t *testing.T) {
 func TestRemove(t *testing.T) {
 	mr, err := miniredis.Run()
 	if err != nil {
-		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		log.Fatalf(miniRedisError, err)
 	}
 	redisMock := RedisDatabase{Host: mr.Addr()}
 	redisMock.Connect()
@@ -199,7 +203,7 @@ func TestRemove(t *testing.T) {
 		err := redisMock.removeData(redisMock.client, hash)
 		assert.NotEqual(t, nil, err)
 	})
-	t.Run("Error disconnect", func(t *testing.T) {
+	t.Run("Disconnect when delete", func(t *testing.T) {
 		mr.Close()
 		isOkay := redisMock.Remove("test", "1")
 		assert.Equal(t, false, isOkay)

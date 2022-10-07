@@ -34,7 +34,7 @@ func TestCheckClientMysql(t *testing.T) {
 	db, _, _ := sqlmock.New()
 	defer db.Close()
 
-	t.Run("Error no connection", func(t *testing.T) {
+	t.Run("Error not connect", func(t *testing.T) {
 		dbMysql.client = nil
 		DatabaseMysql = nil
 		assert.Equal(t, (*sql.DB)(nil), dbMysql.CheckClient())

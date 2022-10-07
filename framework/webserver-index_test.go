@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	pathFolder = "log-test"
+)
+
 func TestCreateService(t *testing.T) {
 	t.Run("Running service", func(t *testing.T) {
 		e := echo.New()
@@ -45,7 +49,7 @@ func TestSetupLogFile(t *testing.T) {
 	}()
 
 	t.Run("Setup normally", func(t *testing.T) {
-		webserver.SetupLogFile("log-test", "hello", "world")
+		webserver.SetupLogFile(pathFolder, "hello", "world")
 		if _, err := os.Stat("log-test/hello"); err != nil {
 			t.Fatal(err)
 		}
@@ -54,12 +58,12 @@ func TestSetupLogFile(t *testing.T) {
 	})
 	t.Run("Filename log error", func(t *testing.T) {
 		assert.Panic(t, "Failed to create request log file:open log-test/: is a directory", func() {
-			webserver.SetupLogFile("log-test", "", "world")
+			webserver.SetupLogFile(pathFolder, "", "world")
 		})
 	})
 	t.Run("Filename error", func(t *testing.T) {
 		assert.Panic(t, "Failed to create request log file:open log-test/: is a directory", func() {
-			webserver.SetupLogFile("log-test", "hello", "")
+			webserver.SetupLogFile(pathFolder, "hello", "")
 		})
 		webserver.logFile.Close()
 	})
@@ -69,14 +73,14 @@ func TestResultAPI(t *testing.T) {
 	defer func() {
 		webserver.logFile.Close()
 		webserver.logErrFile.Close()
-		err := os.RemoveAll("log-test")
+		err := os.RemoveAll(pathFolder)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}()
 
 	e := echo.New()
-	e.Use(webserver.Logger("log-test", "hello", "world"))
+	e.Use(webserver.Logger(pathFolder, "hello", "world"))
 	e.GET("/test", func(context echo.Context) error {
 		return webserver.ResultAPI(context, 200, "ok", "ok")
 	})

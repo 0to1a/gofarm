@@ -8,30 +8,31 @@ import (
 )
 
 func TestCheckModuleVersion(t *testing.T) {
+	moduleName := "module name"
 	target := structure.ModularStruct{
-		Name:       "module name",
+		Name:       moduleName,
 		MinVersion: 10,
 		MaxVersion: 11,
 	}
 
 	t.Run("Module on same version", func(t *testing.T) {
 		assert.Panic(t, nil, func() {
-			utils.checkModuleVersion("module name", 10, target)
+			utils.checkModuleVersion(moduleName, 10, target)
 		})
 	})
 	t.Run("Module on maximum version", func(t *testing.T) {
 		assert.Panic(t, nil, func() {
-			utils.checkModuleVersion("module name", 11, target)
+			utils.checkModuleVersion(moduleName, 11, target)
 		})
 	})
 	t.Run("Module is older", func(t *testing.T) {
 		assert.Panic(t, "Module 'module name' incompatible, target version: 10 exist version: 1", func() {
-			utils.checkModuleVersion("module name", 1, target)
+			utils.checkModuleVersion(moduleName, 1, target)
 		})
 	})
 	t.Run("Module is newest", func(t *testing.T) {
 		assert.Panic(t, "Module 'module name' incompatible, target version: 11 exist version: 100", func() {
-			utils.checkModuleVersion("module name", 100, target)
+			utils.checkModuleVersion(moduleName, 100, target)
 		})
 	})
 }
