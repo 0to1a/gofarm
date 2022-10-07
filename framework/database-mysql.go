@@ -27,18 +27,23 @@ type MysqlDatabase struct {
 	client   *sql.DB
 }
 
-func (w *MysqlDatabase) Connect() *sql.DB {
-	database, err := sql.Open("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
-	//database, err := sqlx.Connect("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
-	if err != nil {
-		log.Fatalln(err)
-	}
+func (w *MysqlDatabase) connectSuccess(database *sql.DB) *sql.DB {
 	w.client = database
 	w.Dialect = goqu.Dialect("mysql")
 	DatabaseMysql = database
 	DialectMysql = goqu.Dialect("mysql")
 
 	return database
+}
+
+func (w *MysqlDatabase) Connect() *sql.DB {
+	database, err := sql.Open("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
+	//database, err := sqlx.Connect("mysql", w.Username+":"+w.Password+"@tcp("+w.Host+")/"+w.Database+"?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return w.connectSuccess(database)
 }
 
 func (w *MysqlDatabase) CheckClient() *sql.DB {
@@ -51,21 +56,24 @@ func (w *MysqlDatabase) CheckClient() *sql.DB {
 	}
 }
 
-func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
-	url := w.Username + ":" + w.Password + "@tcp(" + w.Host + ")/" + w.Database + "?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'"
-	m, err := migrate.NewWithSourceInstance("iofs", data, "mysql://"+url)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = m.Up()
+func (w *MysqlDatabase) migrateHandling(err error) {
 	if err != nil {
 		if err.Error() == okMigration1 {
 			return
 		}
-		log.Fatalln(err)
+		log.Panic(err)
 	} else {
 		log.Println(okMigration2)
 	}
+}
+
+func (w *MysqlDatabase) MigrateDatabase(data source.Driver) {
+	url := w.Username + ":" + w.Password + "@tcp(" + w.Host + ")/" + w.Database + "?multiStatements=true&parseTime=true&sql_mode='ANSI_QUOTES'"
+	m, err := migrate.NewWithSourceInstance("iofs", data, "mysql://"+url)
+	if err != nil {
+		log.Panic(err)
+	}
+	w.migrateHandling(m.Up())
 }
 
 func (w *MysqlDatabase) TableCheck(table string) bool {

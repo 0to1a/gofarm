@@ -14,16 +14,17 @@ type WebServer struct {
 	logErrFile *os.File
 }
 
+func (w *WebServer) runService(serverPort string, router *echo.Echo) {
+	log.Print("Webserver: Service Running")
+	router.HideBanner = true
+	router.Logger.Panic(router.Start(serverPort))
+}
+
 func (w *WebServer) CreateService(port int, router *echo.Echo) {
 	go func() {
 		serverPort := ":" + strconv.Itoa(port)
-
-		log.Print("Webserver: Service Running")
-		router.HideBanner = true
-		router.Logger.Fatal(router.Start(serverPort))
+		w.runService(serverPort, router)
 	}()
-
-	select {}
 }
 
 func (w *WebServer) SetupLogFile(logPath string, filenameLog string, filenameError string) {
@@ -32,28 +33,17 @@ func (w *WebServer) SetupLogFile(logPath string, filenameLog string, filenameErr
 
 	w.logFile, err = os.OpenFile(logPath+"/"+filenameLog, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln("Failed to create request log file:", err)
+		log.Panic("Failed to create request log file:", err)
 	}
 
 	w.logErrFile, err = os.OpenFile(logPath+"/"+filenameError, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln("Failed to create request log file:", err)
+		log.Panic("Failed to create request log file:", err)
 	}
 }
 
 func (w *WebServer) ResultAPI(c echo.Context, response int, message string, data interface{}) error {
 	return c.JSON(response, utils.GenerateStandardAPI(response, message, data))
-}
-
-func (w *WebServer) ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
-	response := 0
-	switch v := mapJson["response"].(type) {
-	case int:
-		response = v
-	case float64:
-		response = int(v)
-	}
-	return c.JSON(response, mapJson)
 }
 
 func (w *WebServer) Logger(logFolder string, filenameLog string, filenameError string) echo.MiddlewareFunc {

@@ -5,6 +5,9 @@ var (
 )
 
 type configure struct {
+	// Calculate Module - sample only
+	SampleMultiplier float64 `json:"sample_multiplier"`
+
 	// Core Configuration - default Framework
 	ServicePort         int    `json:"service_port"`
 	SecretKey           string `json:"secret_key"`
