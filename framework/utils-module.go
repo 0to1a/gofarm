@@ -1,9 +1,9 @@
 package framework
 
 import (
-	"embed"
 	"framework/app/structure"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"io/fs"
 	"log"
 )
 
@@ -33,19 +33,19 @@ func (w *Utils) UseModule(module structure.ModularStruct) {
 	listModule = append(listModule, &module)
 }
 
-func (w *Utils) MigrateTools(fs embed.FS) {
+func (w *Utils) MigrateTools(fs fs.FS) {
 	if !structure.SystemConf.UseMigration {
 		return
 	}
 
-	list, _ := fs.ReadDir("migration")
-	if len(list) == 0 {
-		return // Error no folder migration
-	}
+	//_, err := fs.Open("migration")
+	//if err != nil {
+	//	return // Error no folder migration
+	//}
 
 	d, err := iofs.New(fs, "migration")
 	if err != nil {
-		log.Panic(err)
+		return // Error no folder migration
 	}
 
 	if structure.SystemConf.Database == "mysql" {
