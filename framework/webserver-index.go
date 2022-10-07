@@ -14,16 +14,17 @@ type WebServer struct {
 	logErrFile *os.File
 }
 
+func (w *WebServer) runService(serverPort string, router *echo.Echo) {
+	log.Print("Webserver: Service Running")
+	router.HideBanner = true
+	router.Logger.Panic(router.Start(serverPort))
+}
+
 func (w *WebServer) CreateService(port int, router *echo.Echo) {
 	go func() {
 		serverPort := ":" + strconv.Itoa(port)
-
-		log.Print("Webserver: Service Running")
-		router.HideBanner = true
-		router.Logger.Panic(router.Start(serverPort))
+		w.runService(serverPort, router)
 	}()
-
-	select {}
 }
 
 func (w *WebServer) SetupLogFile(logPath string, filenameLog string, filenameError string) {
