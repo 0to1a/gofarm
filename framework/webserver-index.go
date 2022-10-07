@@ -46,17 +46,6 @@ func (w *WebServer) ResultAPI(c echo.Context, response int, message string, data
 	return c.JSON(response, utils.GenerateStandardAPI(response, message, data))
 }
 
-func (w *WebServer) ResultAPIFromJson(c echo.Context, mapJson map[string]interface{}) error {
-	response := 0
-	switch v := mapJson["response"].(type) {
-	case int:
-		response = v
-	case float64:
-		response = int(v)
-	}
-	return c.JSON(response, mapJson)
-}
-
 func (w *WebServer) Logger(logFolder string, filenameLog string, filenameError string) echo.MiddlewareFunc {
 	w.SetupLogFile(logFolder, filenameLog, filenameError)
 
