@@ -3,6 +3,7 @@ package framework
 import (
 	"github.com/imroc/req/v3"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -43,7 +44,13 @@ func NewRequestClient(agentName string, timeout int, retry int, customRetryHook 
 
 func funcRetryHook(resp *req.Response, err error) {
 	req := resp.Request.RawRequest
-	log.Println("Retry request:", req.UserAgent(), req.Method, req.URL, err)
+	escapedMethod := strings.Replace(req.Method, "\n", "", -1)
+	escapedMethod = strings.Replace(escapedMethod, "\r", "", -1)
+	escapedUrl := strings.Replace(req.URL.String(), "\n", "", -1)
+	escapedUrl = strings.Replace(escapedUrl, "\r", "", -1)
+	escapedAgent := strings.Replace(req.UserAgent(), "\n", "", -1)
+	escapedAgent = strings.Replace(escapedAgent, "\r", "", -1)
+	log.Println("Retry request:", escapedAgent, escapedMethod, escapedUrl, err)
 }
 
 func funcRetryCondition(resp *req.Response, err error) bool {
