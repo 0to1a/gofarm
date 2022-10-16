@@ -1,5 +1,5 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
-![Coverage](https://img.shields.io/badge/Coverage-96.7%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-85.9%25-brightgreen)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
 [![GitHub issues](https://img.shields.io/github/issues/0to1a/gofarm)](https://github.com/0to1a/gofarm/issues)
 [![GitHub license](https://img.shields.io/github/license/0to1a/gofarm)](https://github.com/0to1a/gofarm/blob/master/LICENSE)
@@ -14,7 +14,7 @@ We need some components to support Build & Deploy working well. Need to install:
 
 For GoFarm Assistant / CLI:
 ```
-Still in progress
+go install github.com/0to1a/gofarm-assistant@latest
 ```
 For database generator:
 ```
@@ -48,7 +48,7 @@ Golang version 1.16+ and Go-Mod supported.
 - [ ] Better logging system
 - [ ] GoFarm Assistant, like PHP Artisan-Laravel / Lumen
 - [x] Continuable framework scaling & dependency module
-- [ ] Unit test, framework coverage
+- [x] Unit test, framework coverage
 - [ ] Unit test, project structure
 - [x] Database migration pattern / tools
 - [ ] Postgres database connection
