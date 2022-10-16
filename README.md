@@ -1,5 +1,5 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
-![Coverage](https://img.shields.io/badge/Coverage-96.7%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-85.9%25-brightgreen)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=0to1a_gofarm&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=0to1a_gofarm)
 [![GitHub issues](https://img.shields.io/github/issues/0to1a/gofarm)](https://github.com/0to1a/gofarm/issues)
 [![GitHub license](https://img.shields.io/github/license/0to1a/gofarm)](https://github.com/0to1a/gofarm/blob/master/LICENSE)
