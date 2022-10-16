@@ -62,16 +62,16 @@ func TestCheckPrefix(t *testing.T) {
 		assert.Equal(t, "", redisMock.CheckPrefix())
 	})
 	t.Run("With global connection", func(t *testing.T) {
-		target := "hello-world::"
+		target := "hello-world"
 		redisMock.Prefix = ""
 		RedisPrefix = target
-		assert.Equal(t, target, redisMock.CheckPrefix())
+		assert.Equal(t, target+"::", redisMock.CheckPrefix())
 	})
 	t.Run("With local connection", func(t *testing.T) {
-		target := "hello-world::"
+		target := "hello-world"
 		redisMock.Prefix = target
 		RedisPrefix = ""
-		assert.Equal(t, target, redisMock.CheckPrefix())
+		assert.Equal(t, target+"::", redisMock.CheckPrefix())
 	})
 }
 
