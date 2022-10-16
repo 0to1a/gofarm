@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"io/ioutil"
 	"log"
@@ -58,9 +59,9 @@ func (w *RedisDatabase) CheckPrefix() string {
 	if RedisPrefix == "" && w.Prefix == "" {
 		return ""
 	} else if w.Prefix != "" {
-		return w.Prefix
+		return w.Prefix + "::"
 	} else {
-		return RedisPrefix
+		return RedisPrefix + "::"
 	}
 }
 
@@ -70,7 +71,7 @@ func (w *RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, d
 		return false
 	}
 
-	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "::" + utils.SeedName(payload)
 
 	err := clientRedis.Set(context.Background(), hash, data, time.Duration(timeInMinutes)*time.Minute).Err()
 	if err != nil {
@@ -79,6 +80,11 @@ func (w *RedisDatabase) Set(urlPath string, payload string, timeInMinutes int, d
 	}
 
 	return true
+}
+
+func (w *RedisDatabase) SetJsonMarshal(urlPath string, payload string, timeInMinutes int, data []byte) bool {
+	out, _ := json.Marshal(data)
+	return w.Set(urlPath, payload, timeInMinutes, string(out))
 }
 
 func (w *RedisDatabase) SetCompress(urlPath string, payload string, timeInMinutes int, data string) bool {
@@ -107,13 +113,18 @@ func (w *RedisDatabase) SetCompress(urlPath string, payload string, timeInMinute
 	return w.Set(urlPath, payload, timeInMinutes, str)
 }
 
+func (w *RedisDatabase) SetCompressJsonMarshal(urlPath string, payload string, timeInMinutes int, data interface{}) bool {
+	out, _ := json.Marshal(data)
+	return w.SetCompress(urlPath, payload, timeInMinutes, string(out))
+}
+
 func (w *RedisDatabase) Get(urlPath string, payload string) (bool, string) {
 	var clientRedis *redis.Client
 	if clientRedis = w.CheckClient(); clientRedis == nil {
 		return false, ""
 	}
 
-	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|" + utils.SeedName(payload)
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "::" + utils.SeedName(payload)
 	res, err := clientRedis.Get(context.Background(), hash).Result()
 	if err == redis.Nil {
 		return false, ""
@@ -156,7 +167,7 @@ func (w *RedisDatabase) Remove(urlPath string, payload string) bool {
 		return false
 	}
 
-	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "|"
+	hash := w.CheckPrefix() + utils.SeedName(urlPath) + "::"
 	if payload == "" {
 		hash += "*"
 		iter := clientRedis.Scan(context.Background(), 0, hash, 0).Iterator()

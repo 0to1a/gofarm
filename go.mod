@@ -14,6 +14,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.15.2
 	github.com/gomodule/redigo v1.8.9 // indirect
+	github.com/imroc/req/v3 v3.24.1
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
