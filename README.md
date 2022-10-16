@@ -14,7 +14,7 @@ We need some components to support Build & Deploy working well. Need to install:
 
 For GoFarm Assistant / CLI:
 ```
-Still in progress
+go install github.com/0to1a/gofarm-assistant@latest
 ```
 For database generator:
 ```
@@ -48,7 +48,7 @@ Golang version 1.16+ and Go-Mod supported.
 - [ ] Better logging system
 - [ ] GoFarm Assistant, like PHP Artisan-Laravel / Lumen
 - [x] Continuable framework scaling & dependency module
-- [ ] Unit test, framework coverage
+- [x] Unit test, framework coverage
 - [ ] Unit test, project structure
 - [x] Database migration pattern / tools
 - [ ] Postgres database connection
