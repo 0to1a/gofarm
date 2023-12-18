@@ -18,5 +18,5 @@ require (
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/crypto v0.17.0 // indirect
 )
